@@ -11,8 +11,8 @@ function b64DecodeUnicode(str) {
     }).join(''));
 }
 
-//doc=location.href.replace('https://html2url.tk/site.html?','')
-doc=location.href.replace('http://localhost:8080/html2url/site.html?','')
+doc=location.href.replace('https://html2url.tk/site.html?','')
+//doc=location.href.replace('http://localhost:8080/html2url/site.html?','')
 doc=doc.split("js=");
 //document.getElementById('mainbody').innerHTML=decodeURIComponent(doc)
 document.getElementById('mainbody').innerHTML=b64DecodeUnicode(doc[0])
