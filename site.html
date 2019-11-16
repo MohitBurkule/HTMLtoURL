@@ -1,0 +1,42 @@
+
+<body id='mainbody'>
+
+</body>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.js'></script>
+<script>
+function b64DecodeUnicode(str) {
+    // Going backwards: from bytestream, to percent-encoding, to original string.
+    return decodeURIComponent(atob(str).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+}
+
+//doc=location.href.replace('https://html2url.tk/site.html?','')
+doc=location.href.replace('http://localhost:8080/html2url/site.html?','')
+doc=doc.split("js=");
+//document.getElementById('mainbody').innerHTML=decodeURIComponent(doc)
+document.getElementById('mainbody').innerHTML=b64DecodeUnicode(doc[0])
+
+var script = document.createElement("script");
+
+// Add script content
+
+script.innerHTML = b64DecodeUnicode(doc[1]);
+
+// Append
+
+document.head.appendChild(script);
+
+console.log(atob('hi'));
+console.log(btoa(atob('hi')));
+console.log(btoa('hi'));
+
+var str = "This is my compression test.";
+//console.log("Size of sample is: " + document.getElementById('data').value.replace('actual=','').length);
+//var compressed = LZString.compress(document.getElementById('data').value.replace('actual=',''));
+//console.log("Size of compressed sample is: " + compressed.length);
+str = LZString.decompress(doc);
+console.log("Sample is: " + str);
+
+//document.getElementById('mainbody').innerHTML=str
+</script>
