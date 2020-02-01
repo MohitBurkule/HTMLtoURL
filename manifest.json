@@ -1,6 +1,6 @@
 {
-  "name": "Dev'Coffee",
-  "short_name": "DevCoffee",
+  "name": "HTML2URL",
+  "short_name": "HTML2URL",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#fdfdfd",
