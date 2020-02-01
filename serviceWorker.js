@@ -1,4 +1,4 @@
-const staticDevCoffee = "dev-coffee-site-v4";//hi
+const staticDevCoffee = "dev-coffee-site-v5";//hi
 const assets = [
   "/",
   "/site.html",
@@ -7,8 +7,8 @@ const assets = [
 ];
 
 self.addEventListener("install", installEvent => {
-
-  	self.caches.delete('dev-coffee-site-v1');
+	for(i=1;i<ver;i++)
+  	self.caches.delete('dev-coffee-site-v'+i);
   installEvent.waitUntil(
     caches.open(staticDevCoffee).then(cache => {
       cache.addAll(assets);
