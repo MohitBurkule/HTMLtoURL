@@ -2,6 +2,7 @@ const staticDevCoffee = "dev-coffee-site-v1";
 const assets = [
   "/",
   "/site.html",
+  "/site.html?aGk=js=",
   "/index.html",
   "/js/app.js"
 ];
