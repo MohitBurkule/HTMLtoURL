@@ -1,10 +1,13 @@
-const ver=6
+const ver=7
 const staticDevCoffee = "dev-coffee-site-v"+ver;//hi
 const assets = [
   "/",
   "/site.html",
   "/index.html",
-  "/js/app.js"
+  "/js/app.js",
+  "/images/icon-3/icon128.png",
+  "/images/icon-3/icon256.png",
+  "/images/icon-3/icon512.png",
 ];
 
 self.addEventListener("install", installEvent => {
