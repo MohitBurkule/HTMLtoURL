@@ -38,7 +38,7 @@ window.stop();
             
 			<div class="form-group"><textarea class="form-control" rows="10" id='data' name="actual" placeholder="paste html code here"></textarea></div>
 			<div class="form-group"><textarea class="form-control" rows="10" id='datajs' name="actualjs" placeholder="paste js code here ( no need to add script tags )"></textarea></div>
-            <div class="form-group"><button class="btn btn-primary btn-block"  type="submit" onclick='GETURL()'>submit</button></div><a href="http://mb.rf.gd/github-mb.rf.gd" style="color:blue" class="forgot"></a>
+            <div class="form-group"><button class="btn btn-primary btn-block"  type="submit" onclick='GETURL()'>Submit and Copy Url</button></div><a href="http://mb.rf.gd/github-mb.rf.gd" style="color:blue" class="forgot"></a>
             
     </div>
 
@@ -66,8 +66,14 @@ var str = "This is my compression test.";
 console.log("Size of sample is: " + document.getElementById('data').value.replace('actual=','').length);
 var compressed = LZString.compress(document.getElementById('data').value.replace('actual=',''));
 console.log("Size of compressed sample is: " + compressed.length);
-str = LZString.decompress(compressed);
-console.log("Sample is: " + str);
+
+var copyText1 = document.getElementById('urllink').href;
+copyText1.select();
+copyText1.setSelectionRange(0, 99999)
+document.execCommand("copy");
+alert("URL COPIED !");
+//str = LZString.decompress(compressed);
+//console.log("Sample is: " + str);
 //document.getElementById('urllink').href='http://html2url.rf.gd/site.php?'+compressed;
 }
 
