@@ -1,4 +1,4 @@
-const staticDevCoffee = "dev-coffee-site-v3";//hi
+const staticDevCoffee = "dev-coffee-site-v4";//hi
 const assets = [
   "/",
   "/site.html",
