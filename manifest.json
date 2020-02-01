@@ -1,6 +1,6 @@
 {
   "name": "HTML2URL",
-  "short_name": "HTML2URL2",
+  "short_name": "HTML2URL",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#fdfdfd",
