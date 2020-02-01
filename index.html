@@ -54,24 +54,29 @@ function b64EncodeUnicode(str) {
             return String.fromCharCode('0x' + p1);
     }));
 }
-
+function copy(text) {
+    var input = document.createElement('input');
+    input.setAttribute('value', text);
+    document.body.appendChild(input);
+    input.select();
+    var result = document.execCommand('copy');
+    document.body.removeChild(input);
+    return result;
+}
+ 
 function GETURL()
 {
-var copyText1 = document.getElementById('myInput');
+var copyText1 = "default url";
 
 //document.getElementById('urllink').href='https://html2url.tk/site.html?'+b64EncodeUnicode(document.getElementById('data').value.replace('actual=',''));
 document.getElementById('urllink').href='https://html2url.tk/site.html?'+b64EncodeUnicode(document.getElementById('data').value.replace('actual=',''))+"js="+b64EncodeUnicode(document.getElementById('datajs').value.replace('actualjs=',''));
-copyText1.value='https://html2url.tk/site.html?'+b64EncodeUnicode(document.getElementById('data').value.replace('actual=',''))+"js="+b64EncodeUnicode(document.getElementById('datajs').value.replace('actualjs=',''));
+copyText1='https://html2url.tk/site.html?'+b64EncodeUnicode(document.getElementById('data').value.replace('actual=',''))+"js="+b64EncodeUnicode(document.getElementById('datajs').value.replace('actualjs=',''));
 document.getElementById('urllink').innerHTML ='Right click  here and copy link address'
 //var str = "This is my compression test.";
 //console.log("Size of sample is: " + document.getElementById('data').value.replace('actual=','').length);
 //var compressed = LZString.compress(document.getElementById('data').value.replace('actual=',''));
 //console.log("Size of compressed sample is: " + compressed.length);
-
-
-copyText1.select();
-copyText1.setSelectionRange(0, 99999)
-document.execCommand("copy");
+copy(copyText1);
 alert("URL COPIED !");
 //str = LZString.decompress(compressed);
 //console.log("Sample is: " + str);
