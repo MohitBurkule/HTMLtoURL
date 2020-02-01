@@ -57,17 +57,18 @@ function b64EncodeUnicode(str) {
 
 function GETURL()
 {
+var copyText1 = document.getElementById('myInput');
 
 //document.getElementById('urllink').href='https://html2url.tk/site.html?'+b64EncodeUnicode(document.getElementById('data').value.replace('actual=',''));
 document.getElementById('urllink').href='https://html2url.tk/site.html?'+b64EncodeUnicode(document.getElementById('data').value.replace('actual=',''))+"js="+b64EncodeUnicode(document.getElementById('datajs').value.replace('actualjs=',''));
+copyText1.value='https://html2url.tk/site.html?'+b64EncodeUnicode(document.getElementById('data').value.replace('actual=',''))+"js="+b64EncodeUnicode(document.getElementById('datajs').value.replace('actualjs=',''));
 document.getElementById('urllink').innerHTML ='Right click  here and copy link address'
 //var str = "This is my compression test.";
 //console.log("Size of sample is: " + document.getElementById('data').value.replace('actual=','').length);
 //var compressed = LZString.compress(document.getElementById('data').value.replace('actual=',''));
 //console.log("Size of compressed sample is: " + compressed.length);
 
-var copyText1 = document.getElementById('myInput');
-copyText1.value=document.getElementById('urllink').href;
+
 copyText1.select();
 copyText1.setSelectionRange(0, 99999)
 document.execCommand("copy");
