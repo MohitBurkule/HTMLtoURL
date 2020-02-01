@@ -4,10 +4,7 @@ const assets = [
   "/",
   "/site.html",
   "/index.html",
-  "/js/app.js",
-  "/images/icon-3/icon128.png",
-  "/images/icon-3/icon256.png",
-  "/images/icon-3/icon512.png"
+  "/js/app.js"
 ];
 
 self.addEventListener("install", installEvent => {
