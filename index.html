@@ -12,6 +12,26 @@
     <title>login</title>
 
 </head>
+        <script type="text/javascript">
+            var timerStart = Date.now();
+				
+
+		</script>
+<script>
+
+var c=localStorage.getItem('myBook');
+if(c)
+{
+console.log("frommem");
+console.log(c);
+document.write(atob(JSON.parse(c)));
+window.stop();
+document.body.children[0].innerHTML=atob(JSON.parse(c));
+window.onload=console.log("Time until everything loaded: ", Date.now()-timerStart);
+window.stop();
+}
+</script>
+<div>
 
  <a href='' id='urllink' >  </a>
      <div class="login-clean">
@@ -26,8 +46,8 @@
     </div>
 
     
-
-    <script>
+ </div	>
+ <script>
 function b64EncodeUnicode(str) {
     // first we use encodeURIComponent to get percent-encoded UTF-8,
     // then we convert the percent encodings into raw bytes which
@@ -151,6 +171,14 @@ border: 1px solid
     
   
  </style>
+ 
+
+	
+ <script>
+ var htmlContents = document.body.children[0].innerHTML;
+localStorage.setItem('myBook', JSON.stringify(btoa(htmlContents)));
+ var htmlContents = document.scripts[1].innerHTML;
+localStorage.setItem('smyBook', JSON.stringify(btoa(htmlContents)));
+window.onload=console.log("endTime until everything loaded: ", Date.now()-timerStart);
+ </script>
    
-	
-	
