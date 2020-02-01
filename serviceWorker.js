@@ -8,7 +8,7 @@ const assets = [
 
 self.addEventListener("install", installEvent => {
 
-  	self.caches.delete('dev-coffee-site-v3');
+  	self.caches.delete('dev-coffee-site-v2');
   installEvent.waitUntil(
     caches.open(staticDevCoffee).then(cache => {
       cache.addAll(assets);
