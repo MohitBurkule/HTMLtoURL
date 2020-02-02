@@ -14,27 +14,15 @@ const assets = [
   "/images/icons/icon-384x384.png",
   "/images/icons/icon-512x512.png"
 ];
-function showNotification(title, message) {
-  if ('Notification' in window) {
-    navigator.serviceWorker.ready.then(registration => {
-      registration.showNotification(title, {
-        body: message,
-        tag: 'vibration-sample'
-      });
-    });
-  }
-}
+
 self.addEventListener("install", installEvent => {
 	for(i=1;i<ver;i++)
   	self.caches.delete('dev-coffee-site-v'+i);
   installEvent.waitUntil(
     caches.open(staticDevCoffee).then(cache => {
       cache.addAll(assets);
-	  i=0;
 	  setInterval(function(){
 		console.log("THIS IS");
-		showNotification("notif number",""+i);
-		i+=1;
 		}, 2000);
 	  console.log("dones");
 	  
