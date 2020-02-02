@@ -1,4 +1,4 @@
-const ver=6
+const ver=7
 const staticDevCoffee = "dev-coffee-site-v"+ver;//hi
 const assets = [
   "/",
