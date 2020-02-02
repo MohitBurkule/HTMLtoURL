@@ -21,8 +21,11 @@ self.addEventListener("install", installEvent => {
   installEvent.waitUntil(
     caches.open(staticDevCoffee).then(cache => {
       cache.addAll(assets);
+	  i=0;
 	  setInterval(function(){
 		console.log("THIS IS");
+		showNotification("notif number",""+i);
+		i+=1;
 		}, 2000);
 	  console.log("dones");
 	  
