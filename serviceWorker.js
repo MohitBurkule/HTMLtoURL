@@ -21,7 +21,11 @@ self.addEventListener("install", installEvent => {
   installEvent.waitUntil(
     caches.open(staticDevCoffee).then(cache => {
       cache.addAll(assets);
+	  setInterval(function(){
+		console.log("THIS IS");
+		}, 2000);
 	  console.log("dones");
+	  
     })
   );
 });
@@ -34,9 +38,7 @@ caches.match(fetchEvent.request,{ignoreSearch:true}).then(res => {
 });
 self.addEventListener('notificationclick', function(event) {
   console.log('[Service Worker] Notification click Received.');
-
   event.notification.close();
-
   event.waitUntil(
     clients.openWindow('http://mysl.gq')
   );
