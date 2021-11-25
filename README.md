@@ -1,5 +1,5 @@
-# html2url( HTML to URL )
-converts small html into urls directly ,live on https://html2url.netlify.app/
+#  HTML to URL 
+converts small html into urls directly ,live on https://htmltourl.netlify.app/
 (Making good use of Cross site Scripting Vulnerability)
 
 #WHY?
