@@ -2,7 +2,7 @@
 converts small html into urls directly ,live on https://htmltourl.netlify.app/
 (Making good use of Cross site Scripting Vulnerability)
 
-#WHY?
+# WHY?
 1) People Search for it  -> https://www.quora.com/Is-there-any-way-to-convert-a-HTML-link-into-URL-link
 
 2) To simply explore the concept that url can actually contain the data vs url pointing to a location containing data 
@@ -12,14 +12,14 @@ converts small html into urls directly ,live on https://htmltourl.netlify.app/
 4) Because of 3) Website is served directly via CDN -> FASTER Loading 
 
 
-#HOW?
+# HOW?
 Works similar to image data urls
 Data is compressed and base64 encoded and placed in the url 
 
 #Is it Innovative?
 Certainly , As there is no similar product as per my knowledge
 
-#Problems / Disadvantages?
+# Problems / Disadvantages?
 1)Since the contents of the webpage depend on contents in the url , Its a disaster recepie for Cross site scripting attack
 
 2)Urls can be horrendously long !  
