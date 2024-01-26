@@ -24,7 +24,7 @@ Certainly , As there is no similar product as per my knowledge
 
 2)Urls can be horrendously long !  
 
-#How would I solve these Problems?(Possibly in a future version)
+# How would I solve these Problems?(Possibly in a future version)
 1) Can add a Checksum-like value at the end of Url and which would be stored in backend and checked everytime a url is rendered
  
 2) Efficient Data Compression / Template based techniques can be used to overcome long urls 
