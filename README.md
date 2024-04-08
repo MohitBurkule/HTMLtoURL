@@ -1,30 +1,29 @@
-#  HTML to URL 
-converts small html into urls directly ,live on https://htmltourl.netlify.app/
-(Making good use of Cross site Scripting Vulnerability)
+# HTML to URL 🔗
 
-# WHY?
-1) People Search for it  -> https://www.quora.com/Is-there-any-way-to-convert-a-HTML-link-into-URL-link
+Convert small HTML into URLs directly with HTML to URL! This innovative tool makes good use of Cross-Site Scripting Vulnerability to transform HTML snippets into clickable URLs effortlessly.
 
-2) To simply explore the concept that url can actually contain the data vs url pointing to a location containing data 
+## Why HTML to URL?
 
-3) No backend Processing required! (Server serves only html and js directly as a static site )
+1) People are searching for it! Check out the discussion on Quora: [Is there any way to convert a HTML link into a URL link?](https://www.quora.com/Is-there-any-way-to-convert-a-HTML-link-into-URL-link)
 
-4) Because of 3) Website is served directly via CDN -> FASTER Loading 
+2) Explore the concept of URLs containing data versus pointing to it.
 
+3) No backend processing required! The server serves only HTML and JS directly as a static site, resulting in faster loading.
 
-# HOW?
-Works similar to image data urls
-Data is compressed and base64 encoded and placed in the url 
+## How Does it Work?
 
-#Is it Innovative?
-Certainly , As there is no similar product as per my knowledge
+Similar to image data URLs, data is compressed, base64 encoded, and placed in the URL.
 
-# Problems / Disadvantages?
-1)Since the contents of the webpage depend on contents in the url , Its a disaster recepie for Cross site scripting attack
+## Is it Innovative?
 
-2)Urls can be horrendously long !  
+Certainly! There's no similar product as per my knowledge.
 
-# How would I solve these Problems?(Possibly in a future version)
-1) Can add a Checksum-like value at the end of Url and which would be stored in backend and checked everytime a url is rendered
- 
-2) Efficient Data Compression / Template based techniques can be used to overcome long urls 
+## Problems / Disadvantages?
+
+1) Vulnerable to Cross-Site Scripting attacks due to webpage content being dependent on URL contents.
+2) URLs can become horrendously long!
+
+## How Would I Solve These Problems? (Possibly in a Future Version)
+
+1) Add a checksum-like value at the end of the URL, stored in the backend and checked every time a URL is rendered.
+2) Implement efficient data compression or template-based techniques to overcome long URLs.
