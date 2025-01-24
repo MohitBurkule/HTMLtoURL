@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biografia Daniila Navumenki</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Biografia Daniila Navumenki</h1>
+    </header>
+    <main>
+        <section>
+            <h2>O mnie</h2>
+            <p>Hej! Mam na imię Daniil Navumenka. Mam 18 lat, pochodzę z Białorusi, ale obecnie mieszkam w Siedlcach. Jestem studentem pierwszego roku na Uniwersytecie w Siedlcach i marzę o pracy jako logistyk. Moim celem jest życie w Unii Europejskiej oraz zarabianie pieniędzy, aby spełniać swoje marzenia. </p>
+            <p>Przez 11 lat uprawiałem sport, grając w piłkę nożną. Uwielbiam podróżować i poznawać nowe miejsca. Mam dużą rodzinę: dwie siostry, jednego brata, tatę i mamę.</p>
+        </section>
+
+        <section>
+            <h2>Zdjęcia</h2>
+            <img src="https://i.postimg.cc/Lsjv8Vmx/5231159812094551957.jpg" alt="Zdjęcie Daniila">
+            <img src="https://i.postimg.cc/mgz80sJf/5231159812094551956.jpg" alt="Zdjęcie Daniila">
+        </section>
+
+        <section>
+            <h2>Dane kontaktowe</h2>
+            <table>
+                <tr>
+                    <th>Informacja</th>
+                    <th>Wartość</th>
+                </tr>
+                <tr>
+                    <td>Telefon</td>
+                    <td>+48 796 259 689</td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>navumenkadaniil@gmail.com</td>
+                </tr>
+                <tr>
+                    <td>Miejsce zamieszkania</td>
+                    <td>Siedlce, Polska</td>
+                </tr>
+            </table>
+        </section>
+    </main>
+    <footer>
+        <p>Strona stworzona przez Daniila Navumenkę &copy; 2025</p>
+    </footer>
+</body>
+</html>
