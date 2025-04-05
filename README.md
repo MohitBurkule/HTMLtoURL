@@ -2,6 +2,11 @@
 
 Convert small HTML into URLs directly with HTML to URL! This innovative tool makes good use of Cross-Site Scripting Vulnerability to transform HTML snippets into clickable URLs effortlessly.
 
+## NEW
+
+Checkout the new updated project at html2urlagain.netlify.app
+
+
 ## Why HTML to URL?
 
 1) People are searching for it! Check out the discussion on Quora: [Is there any way to convert a HTML link into a URL link?](https://www.quora.com/Is-there-any-way-to-convert-a-HTML-link-into-URL-link)
