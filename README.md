@@ -4,7 +4,7 @@ Convert small HTML into URLs directly with HTML to URL! This innovative tool mak
 
 ## NEW
 
-Checkout the new updated project at html2urlagain.netlify.app
+Checkout the new updated project at [html2urlagain.netlify.app](html2urlagain.netlify.app)
 
 
 ## Why HTML to URL?
