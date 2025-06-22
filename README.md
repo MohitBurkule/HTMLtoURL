@@ -32,3 +32,5 @@ Certainly! There's no similar product as per my knowledge.
 
 1) Add a checksum-like value at the end of the URL, stored in the backend and checked every time a URL is rendered.
 2) Implement efficient data compression or template-based techniques to overcome long URLs.
+
+Old version: https://html2url.netlify.app/
