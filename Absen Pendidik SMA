@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aplikasi Absen - SMA PLUS AT-THAHIRIN (Today-only)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <style>
+    :root{
+      --primary:#2563eb; --secondary:#10b981; --card:#fff;
+      --muted:#64748b; --text:#1e293b; --radius:14px; --shadow:0 8px 20px rgba(0,0,0,0.08);
+    }
+    *{box-sizing:border-box;font-family:'Poppins',sans-serif}
+    body{margin:0;padding:28px;background:linear-gradient(135deg,#dbeafe 0%,#f0f9ff 100%);color:var(--text)}
+    .container{max-width:1100px;margin:0 auto}
+    header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px}
+    h1{margin:0;color:var(--primary);font-size:20px}
+    .small{color:var(--muted);font-size:13px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+    .card{background:var(--card);padding:18px;border-radius:12px;box-shadow:var(--shadow);transition:transform .18s}
+    .card:hover{transform:translateY(-3px)}
+    label{display:block;font-weight:600;margin-bottom:6px;font-size:13px}
+    input,textarea,select,button{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #e6eefc;font-size:14px}
+    textarea{resize:none}
+    .row{display:flex;gap:10px}
+    .row .col{flex:1}
+    button.btn{cursor:pointer;border:none;color:#fff;font-weight:600;padding:10px 12px;border-radius:10px}
+    .btn.primary{background:var(--primary)}
+    .btn.secondary{background:var(--secondary)}
+    .btn.ghost{background:transparent;color:var(--primary);border:2px solid var(--primary)}
+    .btn.danger{background:#ef4444}
+    .small-muted{color:var(--muted);font-size:13px;margin-top:8px}
+    .staff-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:#f8fbff;margin-bottom:8px}
+    .badge{padding:6px 10px;border-radius:999px;font-weight:700;font-size:12px}
+    .status-hadir{background:#dcfce7;color:#166534}
+    .status-izin{background:#fef9c3;color:#92400e}
+    .status-sakit{background:#fee2e2;color:#7f1d1d}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{padding:8px;border-bottom:1px solid #eef6ff;text-align:left;font-size:13px}
+    #rekapModal{display:none;position:fixed;inset:0;background:rgba(10,20,40,0.6);display:flex;justify-content:center;align-items:center;z-index:60}
+    #rekapModal .modal{background:var(--card);padding:16px;border-radius:12px;width:94%;max-width:980px;max-height:86vh;overflow:auto}
+    .manage-panel{margin-top:12px;padding:12px;border-radius:10px;background:#f8fafc;border:1px dashed #e6eefc}
+    .inline{display:inline-block;width:auto}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📋 Aplikasi Absen - SMA PLUS AT-THAHIRIN</h1>
+      <div class="small">Admin & Pengguna — <span id="liveTime">--</span></div>
+    </header>
+
+    <div class="grid">
+      <!-- Form Absen -->
+      <div class="card">
+        <h3 style="margin-top:0;color:var(--primary)">Form Absen</h3>
+
+        <label>Nama Pendidik / Tenaga Kependidikan</label>
+        <select id="staffSelect"><option value="">-- Pilih Nama --</option></select>
+
+        <label style="margin-top:10px">Jabatan</label>
+        <input id="jabatanField" readonly placeholder="Otomatis muncul setelah pilih nama">
+
+        <div style="margin-top:12px" class="row">
+          <div class="col"><button class="btn primary" id="btnMasuk">Absen Masuk</button></div>
+          <div class="col"><button class="btn secondary" id="btnPulang">Absen Pulang</button></div>
+        </div>
+
+        <div style="margin-top:10px">
+          <button class="btn ghost" id="btnIzin">Izin / Sakit</button>
+        </div>
+
+        <label style="margin-top:12px">Keterangan (jika izin/sakit)</label>
+        <textarea id="keterangan" rows="2" placeholder="Contoh: Izin karena sakit"></textarea>
+
+        <div class="small-muted">Absen masuk/pulang dibatasi radius 500 km (kecuali izin/sakit). Izin/sakit dapat dilakukan dari mana saja.</div>
+      </div>
+
+      <!-- Daftar Staff Hari Ini (hanya yang sudah absen hari ini) -->
+      <div class="card">
+        <h3 style="margin-top:0;color:var(--primary)">Daftar Staff &amp; Status Hari Ini</h3>
+        <div id="staffList" style="min-height:120px"></div>
+        <div class="small-muted">Hanya menampilkan staf yang sudah absen hari ini (termasuk izin/sakit).</div>
+      </div>
+
+      <!-- Admin & Manajemen -->
+      <div class="card">
+        <h3 style="margin-top:0;color:var(--primary)">Admin &amp; Kelola Data Guru</h3>
+
+        <label>Kata Sandi Admin</label>
+        <input type="password" id="adminPass" placeholder="Masukkan kata sandi admin">
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <button class="btn primary" id="btnLoginAdmin">Login Admin</button>
+          <button class="btn ghost" id="btnLogoutAdmin" style="display:none">Logout Admin</button>
+        </div>
+
+        <div id="manageArea" style="display:none" class="manage-panel">
+          <h4 style="margin:0 0 8px 0">Kelola Data Guru (Admin)</h4>
+
+          <label>Tambah Guru / Staf</label>
+          <input id="newName" placeholder="Nama lengkap, mis: robby susanto saragi, se">
+          <input id="newJabatan" placeholder="Jabatan, mis: guru matematika" style="margin-top:8px">
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <button class="btn primary inline" id="btnAddStaff">Tambah</button>
+            <button class="btn danger inline" id="btnRemoveSelected">Hapus Nama Terpilih</button>
+          </div>
+
+          <div style="margin-top:12px">
+            <div style="font-weight:600;font-size:13px;margin-bottom:6px">Daftar Guru Saat Ini</div>
+            <select id="manageList" size="6" style="width:100%"></select>
+          </div>
+
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <button class="btn primary" id="btnOpenRekapAdmin">Buka Rekap & Ekspor Excel</button>
+            <button class="btn ghost" id="btnClearAll">Hapus Semua Data Absensi</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer style="text-align:center;margin-top:22px;color:var(--muted)">© 2025 SMA PLUS AT-THAHIRIN</footer>
+  </div>
+
+  <!-- Modal Rekap -->
+  <div id="rekapModal">
+    <div class="modal">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0;color:var(--primary)">Rekap Absensi</h3>
+        <button class="btn ghost" id="closeRekap">Tutup</button>
+      </div>
+
+      <div id="rekapContent" style="margin-top:12px"></div>
+
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn primary" id="exportDaily">Unduh Harian (.xlsx)</button>
+        <button class="btn secondary" id="exportWeekly">Unduh Mingguan (.xlsx)</button>
+        <button class="btn ghost" id="exportMonthly">Unduh Bulanan (.xlsx)</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ======= Konfigurasi / storage keys ======= */
+const ADMIN_PASSWORD = 'addminsma';
+const STAFF_KEY = 'sma_staff_list';
+const LS_KEY = 'sma_absen_records';
+const WA_NUMBER = '6281283005877';
+const SEKOLAH_LAT = -6.192445102894476;
+const SEKOLAH_LON = 106.65713660674628;
+const BATAS_JARAK_M = 500000; // 500 km
+
+let adminLogged = false;
+
+/* ======= Waktu ======= */
+function updateClock(){ document.getElementById('liveTime').textContent = new Date().toLocaleString('id-ID'); }
+setInterval(updateClock,1000); updateClock();
+
+/* ======= Storage helpers ======= */
+function loadStaff(){ return JSON.parse(localStorage.getItem(STAFF_KEY) || '[]'); }
+function saveStaff(arr){ localStorage.setItem(STAFF_KEY, JSON.stringify(arr)); }
+function loadData(){ return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); }
+function saveData(d){ localStorage.setItem(LS_KEY, JSON.stringify(d)); }
+
+/* ======= Inisialisasi staff default jika kosong ======= */
+if(loadStaff().length === 0){
+  const defaultStaff = [
+    { name: 'Robby Susanto Saragi, SE', jabatan: 'Kepala Sekolah' },
+    { name: 'Indryati, S.Pd.I', jabatan: 'Yayasan' }
+  ];
+  saveStaff(defaultStaff);
+}
+
+/* ======= Normalisasi Nama & Jabatan ======= */
+function toTitleCaseWord(w){
+  if(!w) return '';
+  return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+}
+function normalizeName(fullName){
+  if(!fullName) return '';
+  const parts = fullName.split(',');
+  const namePart = parts[0].trim();
+  const suffixPart = parts.slice(1).join(',').trim();
+  const words = namePart.split(/\s+/).filter(Boolean);
+  const titleWords = words.map(w=>toTitleCaseWord(w));
+  const normalizedName = titleWords.join(' ');
+  if(suffixPart){
+    const upperSuffix = suffixPart.toUpperCase();
+    return `${normalizedName}, ${upperSuffix}`;
+  }
+  return normalizedName;
+}
+function normalizeJabatan(jab){
+  if(!jab) return '';
+  return jab.split(/\s+/).map(w=>toTitleCaseWord(w)).join(' ');
+}
+function normalizeExistingStaff(){
+  const arr = loadStaff();
+  let changed = false;
+  const normalized = arr.map(s=>{
+    const nn = normalizeName(s.name || '');
+    const nj = normalizeJabatan(s.jabatan || '');
+    if(nn !== s.name || nj !== s.jabatan) changed = true;
+    return { name: nn, jabatan: nj };
+  });
+  if(changed){
+    saveStaff(normalized);
+  }
+}
+normalizeExistingStaff();
+
+/* ======= Render dropdown & manage list ======= */
+function renderStaffSelect(){
+  const staff = loadStaff();
+  const sel = document.getElementById('staffSelect');
+  const manage = document.getElementById('manageList');
+  sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
+  manage.innerHTML = '';
+  staff.forEach((s, idx)=>{
+    sel.innerHTML += `<option value="${escapeHtml(s.name)}">${escapeHtml(s.name)}</option>`;
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = `${s.name} — ${s.jabatan}`;
+    manage.appendChild(opt);
+  });
+}
+
+/* ======= Haversine (meter) ======= */
+function haversine(lat1,lon1,lat2,lon2){
+  const R = 6371000;
+  const toRad = x => x * Math.PI/180;
+  const dLat = toRad(lat2-lat1), dLon = toRad(lon2-lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+  const c = 2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+  return R * c;
+}
+
+/* ======= Utility waktu & escape ======= */
+function formatDateISO(d){ return d.toISOString().slice(0,10); }
+function formatTime(d){ return d.toTimeString().slice(0,8); }
+function escapeHtml(str){ return (str||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ======= Render Staff & Status Hari Ini (HANYA yang sudah absen hari ini) ======= */
+function renderStaffList(){
+  const data = loadData();
+  const today = formatDateISO(new Date());
+  const todayRecords = data.filter(r => r.date === today);
+  const listEl = document.getElementById('staffList');
+  listEl.innerHTML = '';
+
+  if(todayRecords.length === 0){
+    listEl.innerHTML = '<p style="color:var(--muted)">Belum ada staff yang absen hari ini.</p>';
+    return;
+  }
+
+  // kumpulkan per nama, simpan records dan waktu terakhir untuk sort
+  const map = {};
+  todayRecords.forEach(r=>{
+    const key = r.name;
+    if(!map[key]) map[key] = { records: [], lastTime: r.time || '00:00:00' };
+    map[key].records.push(r);
+    if((r.time || '00:00:00') > map[key].lastTime) map[key].lastTime = r.time || map[key].lastTime;
+  });
+
+  // buat array dari map dan urutkan berdasarkan lastTime desc (terbaru pertama)
+  const arr = Object.keys(map).map(name => ({ name, records: map[name].records, lastTime: map[name].lastTime }));
+  arr.sort((a,b) => b.lastTime.localeCompare(a.lastTime));
+
+  // tampilkan setiap entry: cek apakah ada izin/sakit, masuk/pulang
+  arr.forEach(entry=>{
+    const recs = entry.records;
+    const hasIzin = recs.find(x => x.type === 'izin' || x.type === 'sakit');
+    const masuk = recs.find(x => x.type === 'masuk');
+    const pulang = recs.find(x => x.type === 'pulang');
+    let badgeHtml = '<span class="badge">-</span>';
+    if(hasIzin) badgeHtml = `<span class="badge status-izin">${escapeHtml(hasIzin.type.toUpperCase())}</span>`;
+    else if(masuk && pulang) badgeHtml = '<span class="badge status-hadir">Hadir Lengkap</span>';
+    else if(masuk) badgeHtml = '<span class="badge status-hadir">Masuk</span>';
+    // cari jabatan dari daftar staff (jika ada)
+    const staff = loadStaff().find(s => s.name === entry.name);
+    const jab = staff ? staff.jabatan : '-';
+    const item = document.createElement('div');
+    item.className = 'staff-item';
+    // tampilkan ringkasan waktu terakhir
+    item.innerHTML = `<div><strong>${escapeHtml(entry.name)}</strong><div class="small-muted">${escapeHtml(jab)} · Terakhir: ${escapeHtml(entry.lastTime)}</div></div>${badgeHtml}`;
+    listEl.appendChild(item);
+  });
+}
+
+/* ======= Simpan Absen (umum) ======= */
+function simpanAbsen({name, jabatan, type, lat=null, lon=null, keterangan='' }){
+  const now = new Date();
+  const rec = {
+    name, jabatan, type,
+    date: formatDateISO(now),
+    time: formatTime(now),
+    lat: lat,
+    lon: lon,
+    keterangan: keterangan || ''
+  };
+  const data = loadData();
+  if(data.find(r => r.name === rec.name && r.type === rec.type && r.date === rec.date)){
+    alert('Sudah melakukan absen "'+type+'" hari ini untuk ' + rec.name);
+    return false;
+  }
+  data.push(rec);
+  saveData(data);
+  renderStaffList();
+  // Kirim WA ringkas
+  const waMsg = encodeURIComponent(
+    `📋 Absen ${type.toUpperCase()}\n👤 ${rec.name}\n🏷 ${rec.jabatan || '-'}\n🕒 ${rec.time}\n📅 ${rec.date}` + (rec.keterangan ? `\n📄 ${rec.keterangan}` : '')
+  );
+  window.open(`https://wa.me/${WA_NUMBER}?text=${waMsg}`, '_blank');
+  return true;
+}
+
+/* ======= Absen masuk/pulang (cek lokasi) ======= */
+function absenDenganLokasi(type){
+  const sel = document.getElementById('staffSelect');
+  const name = sel.value;
+  if(!name){ alert('Pilih nama terlebih dahulu.'); return; }
+  const staff = loadStaff().find(s => s.name === name);
+  if(!staff){ alert('Nama tidak ditemukan.'); return; }
+  if(!navigator.geolocation){ alert('Perangkat tidak mendukung geolokasi.'); return; }
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const lat = pos.coords.latitude, lon = pos.coords.longitude;
+    const jarak = haversine(lat, lon, SEKOLAH_LAT, SEKOLAH_LON);
+    if(jarak > BATAS_JARAK_M){
+      alert(`Anda berada di luar radius ${BATAS_JARAK_M/1000} km dari sekolah. Jarak: ${(jarak/1000).toFixed(2)} km`);
+      return;
+    }
+    simpanAbsen({ name: staff.name, jabatan: staff.jabatan, type, lat, lon });
+  }, err=>{
+    alert('Gagal mendapatkan lokasi. Pastikan GPS aktif dan izinkan akses lokasi.');
+  }, { enableHighAccuracy: true, timeout: 10000 });
+}
+
+/* ======= Absen izin/sakit (boleh dari mana saja) ======= */
+function absenIzin(){
+  const sel = document.getElementById('staffSelect');
+  const name = sel.value;
+  if(!name){ alert('Pilih nama terlebih dahulu.'); return; }
+  const staff = loadStaff().find(s => s.name === name);
+  const ket = document.getElementById('keterangan').value.trim();
+  if(!ket){ alert('Tuliskan keterangan izin/sakit.'); return; }
+  const type = ket.toLowerCase().includes('sakit') ? 'sakit' : 'izin';
+  simpanAbsen({ name: staff.name, jabatan: staff.jabatan, type, lat: null, lon: null, keterangan: ket });
+}
+
+/* ======= Event binding absen ======= */
+document.getElementById('btnMasuk').addEventListener('click', ()=>absenDenganLokasi('masuk'));
+document.getElementById('btnPulang').addEventListener('click', ()=>absenDenganLokasi('pulang'));
+document.getElementById('btnIzin').addEventListener('click', ()=>absenIzin());
+
+/* ======= Admin login/logout & show manage panel ======= */
+function setAdminUI(logged){
+  adminLogged = !!logged;
+  document.getElementById('btnLogoutAdmin').style.display = adminLogged ? 'inline-block' : 'none';
+  document.getElementById('btnLoginAdmin').style.display = adminLogged ? 'none' : 'inline-block';
+  document.getElementById('manageArea').style.display = adminLogged ? 'block' : 'none';
+  if(adminLogged){ renderStaffSelect(); renderStaffList(); }
+}
+
+document.getElementById('btnLoginAdmin').addEventListener('click', ()=>{
+  const pass = document.getElementById('adminPass').value;
+  if(pass !== ADMIN_PASSWORD){ alert('Password admin salah'); return; }
+  document.getElementById('adminPass').value = '';
+  setAdminUI(true);
+});
+
+document.getElementById('btnLogoutAdmin').addEventListener('click', ()=>{
+  if(confirm('Logout admin?')){ setAdminUI(false); }
+});
+
+/* ======= Manage: Add staff (dengan normalisasi) ======= */
+document.getElementById('btnAddStaff').addEventListener('click', ()=>{
+  if(!adminLogged){ alert('Login sebagai admin terlebih dahulu.'); return; }
+  let name = (document.getElementById('newName').value || '').trim();
+  let jab = (document.getElementById('newJabatan').value || '').trim();
+  if(!name){ alert('Masukkan nama guru/staf.'); return; }
+  name = normalizeName(name);
+  jab = normalizeJabatan(jab);
+  const arr = loadStaff();
+  if(arr.find(s => s.name.toLowerCase() === name.toLowerCase())){ alert('Nama sudah ada di daftar.'); return; }
+  arr.push({ name, jabatan: jab || '' });
+  saveStaff(arr);
+  document.getElementById('newName').value = '';
+  document.getElementById('newJabatan').value = '';
+  renderStaffSelect();
+  renderStaffList();
+  alert('Guru/staf berhasil ditambahkan: ' + name);
+});
+
+/* ======= Manage: Remove selected from manageList ======= */
+document.getElementById('btnRemoveSelected').addEventListener('click', ()=>{
+  if(!adminLogged){ alert('Login sebagai admin terlebih dahulu.'); return; }
+  const sel = document.getElementById('manageList');
+  const idx = sel.value;
+  if(idx === ''){ alert('Pilih salah satu dari daftar untuk dihapus.'); return; }
+  const arr = loadStaff();
+  const target = arr[idx];
+  if(!target) return;
+  if(!confirm(`Hapus "${target.name}" dari daftar?`)) return;
+  arr.splice(idx,1);
+  saveStaff(arr);
+  renderStaffSelect();
+  renderStaffList();
+  alert('Nama dihapus.');
+});
+
+/* ======= Manage: Clear all absen data (admin) ======= */
+document.getElementById('btnClearAll').addEventListener('click', ()=>{
+  if(!adminLogged){ alert('Login sebagai admin terlebih dahulu.'); return; }
+  if(!confirm('Hapus semua data absensi? Tindakan ini tidak dapat dikembalikan.')) return;
+  localStorage.removeItem(LS_KEY);
+  renderStaffList();
+  alert('Semua data absensi dihapus.');
+});
+
+/* ======= Open rekap modal (admin) ======= */
+document.getElementById('btnOpenRekapAdmin').addEventListener('click', ()=>{
+  if(!adminLogged){ alert('Login sebagai admin terlebih dahulu.'); return; }
+  showRekapModal();
+});
+
+/* ======= Rekap modal actions & export ======= */
+function showRekapModal(){
+  const data = loadData().slice().sort((a,b)=> (b.date + (b.time||'')).localeCompare(a.date + (a.time||'')));
+  const cont = document.getElementById('rekapContent');
+  if(!data.length){ cont.innerHTML = '<p style="color:var(--muted)">Belum ada data absensi.</p>'; document.getElementById('rekapModal').style.display='flex'; return; }
+  let html = `<table><thead><tr><th>Tanggal</th><th>Nama</th><th>Jabatan</th><th>Jenis</th><th>Waktu</th><th>Lat</th><th>Lon</th><th>Keterangan</th></tr></thead><tbody>`;
+  data.forEach(r=>{
+    html += `<tr><td>${r.date}</td><td>${escapeHtml(r.name)}</td><td>${escapeHtml(r.jabatan||'-')}</td><td>${escapeHtml(r.type)}</td><td>${r.time||'-'}</td><td>${r.lat!=null? r.lat.toFixed(6): '-'}</td><td>${r.lon!=null? r.lon.toFixed(6): '-'}</td><td>${escapeHtml(r.keterangan||'-')}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  cont.innerHTML = html;
+  document.getElementById('rekapModal').style.display = 'flex';
+}
+document.getElementById('closeRekap').addEventListener('click', ()=>{ document.getElementById('rekapModal').style.display = 'none'; });
+
+/* ======= Excel export helpers ======= */
+function filterByDays(daysBack){
+  const data = loadData();
+  if(daysBack === 0){
+    const t = formatDateISO(new Date());
+    return data.filter(r => r.date === t);
+  } else {
+    const end = new Date();
+    const start = new Date(); start.setDate(end.getDate() - (daysBack - 1));
+    const sISO = formatDateISO(new Date(start.getFullYear(), start.getMonth(), start.getDate()));
+    const eISO = formatDateISO(new Date(end.getFullYear(), end.getMonth(), end.getDate()));
+    return data.filter(r => r.date >= sISO && r.date <= eISO);
+  }
+}
+
+function makeSheet(records){
+  const rows = records.map(r => ({
+    Tanggal: r.date,
+    Nama: r.name,
+    Jabatan: r.jabatan || '',
+    Jenis: (r.type||'').toUpperCase(),
+    Waktu: r.time || '',
+    Latitude: r.lat != null ? r.lat : '',
+    Longitude: r.lon != null ? r.lon : '',
+    Keterangan: r.keterangan || ''
+  }));
+  return XLSX.utils.json_to_sheet(rows, {header:['Tanggal','Nama','Jabatan','Jenis','Waktu','Latitude','Longitude','Keterangan']});
+}
+
+function downloadExcel(records, filename){
+  if(!records || records.length === 0){ alert('Tidak ada data untuk diekspor.'); return; }
+  const ws = makeSheet(records);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Rekap');
+  XLSX.writeFile(wb, filename);
+}
+
+document.getElementById('exportDaily').addEventListener('click', ()=>{ if(!adminLogged){ alert('Login admin dulu'); return; } const rec = filterByDays(0); downloadExcel(rec, `Rekap_Harian_${formatDateISO(new Date())}.xlsx`); });
+document.getElementById('exportWeekly').addEventListener('click', ()=>{ if(!adminLogged){ alert('Login admin dulu'); return; } const rec = filterByDays(7); downloadExcel(rec, `Rekap_Mingguan_${formatDateISO(new Date())}.xlsx`); });
+document.getElementById('exportMonthly').addEventListener('click', ()=>{ if(!adminLogged){ alert('Login admin dulu'); return; } const rec = filterByDays(30); downloadExcel(rec, `Rekap_Bulanan_${formatDateISO(new Date())}.xlsx`); });
+
+/* ======= Render & bind initial UI ======= */
+renderStaffSelect();
+renderStaffList();
+
+/* update jabatan field when pick */
+document.getElementById('staffSelect').addEventListener('change', ()=>{
+  const name = document.getElementById('staffSelect').value;
+  const staff = loadStaff().find(s => s.name === name);
+  document.getElementById('jabatanField').value = staff ? staff.jabatan : '';
+});
+
+/* ======= Stabilisasi: gunakan event storage untuk sinkron antar-tab (tidak ada interval auto-refresh) ======= */
+window.addEventListener('storage', (e) => {
+  if(e.key === STAFF_KEY) renderStaffSelect();
+  if(e.key === LS_KEY) renderStaffList();
+});
+</script>
+</body>
+</html>
