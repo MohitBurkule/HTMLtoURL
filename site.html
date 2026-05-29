@@ -13,41 +13,45 @@
 <body id='mainbody'>
 
 </body>
-    <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.js'></script> -->
+    <script src="js/lz-string.js"></script>
+    <script src="js/templates.js"></script>
+    <script src="js/codec.js"></script>
 <script>
 function b64DecodeUnicode(str) {
-    // Going backwards: from bytestream, to percent-encoding, to original string.
+    // Legacy fallback: bytestream -> percent-encoding -> original string.
     return decodeURIComponent(atob(str).split('').map(function(c) {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
 }
 
-doc=location.href.replace('https://htmltourl.netlify.app/site.html?','')
-//doc=location.href.replace('http://localhost:8080/html2url/site.html?','')
-doc=doc.split("js=");
-//document.getElementById('mainbody').innerHTML=decodeURIComponent(doc)
-document.getElementById('mainbody').innerHTML=b64DecodeUnicode(doc[0])
+// Read the query string raw (don't let the browser turn "+" into spaces).
+var query = location.search.replace(/^\?/, '');
+var htmlSrc = '', jsSrc = '';
 
-var script = document.createElement("script");
+function getParam(qs, key) {
+    var parts = qs.split('&');
+    for (var i = 0; i < parts.length; i++) {
+        if (parts[i].indexOf(key + '=') === 0) return parts[i].slice(key.length + 1);
+    }
+    return null;
+}
 
-// Add script content
+if (getParam(query, 'd') !== null) {
+    // New format: ?d=<htmlToken>&j=<jsToken>  (template-diff + LZString)
+    htmlSrc = HTML2URLCodec.decode(getParam(query, 'd') || '');
+    jsSrc   = HTML2URLCodec.decode(getParam(query, 'j') || '');
+} else {
+    // Legacy format: ?<htmlBase64>js=<jsBase64>
+    var doc = query.split('js=');
+    htmlSrc = b64DecodeUnicode(doc[0] || '');
+    jsSrc   = doc[1] ? b64DecodeUnicode(doc[1]) : '';
+}
 
-script.innerHTML = b64DecodeUnicode(doc[1]);
+document.getElementById('mainbody').innerHTML = htmlSrc;
 
-// Append
-
-document.head.appendChild(script);
-
-console.log(atob('hi'));
-console.log(btoa(atob('hi')));
-console.log(btoa('hi'));
-/*
-var str = "This is my compression test.";
-//console.log("Size of sample is: " + document.getElementById('data').value.replace('actual=','').length);
-//var compressed = LZString.compress(document.getElementById('data').value.replace('actual=',''));
-//console.log("Size of compressed sample is: " + compressed.length);
-str = LZString.decompress(doc);
-console.log("Sample is: " + str);
-*/
-//document.getElementById('mainbody').innerHTML=str
+if (jsSrc) {
+    var script = document.createElement('script');
+    script.innerHTML = jsSrc;
+    document.head.appendChild(script);
+}
 </script>

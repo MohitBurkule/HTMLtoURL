@@ -80,21 +80,26 @@ function copy(text) {
  
 function GETURL()
 {
-var copyText1 = "default url";
+var html = document.getElementById('data').value.replace('actual=','');
+var js   = document.getElementById('datajs').value.replace('actualjs=','');
 
-//document.getElementById('urllink').href='https://htmltourl.netlify.app/site.html?'+b64EncodeUnicode(document.getElementById('data').value.replace('actual=',''));
-document.getElementById('urllink').href='https://htmltourl.netlify.app/site.html?'+b64EncodeUnicode(document.getElementById('data').value.replace('actual=',''))+"js="+b64EncodeUnicode(document.getElementById('datajs').value.replace('actualjs=',''));
-copyText1='https://htmltourl.netlify.app/site.html?'+b64EncodeUnicode(document.getElementById('data').value.replace('actual=',''))+"js="+b64EncodeUnicode(document.getElementById('datajs').value.replace('actualjs=',''));
-document.getElementById('urllink').innerHTML ='Right click  here and copy link address'
-//var str = "This is my compression test.";
-//console.log("Size of sample is: " + document.getElementById('data').value.replace('actual=','').length);
-//var compressed = LZString.compress(document.getElementById('data').value.replace('actual=',''));
-//console.log("Size of compressed sample is: " + compressed.length);
-copy(copyText1);
+// New format: template-diff + LZString, URL-safe. See js/codec.js.
+var url = 'https://htmltourl.netlify.app/site.html?d=' + HTML2URLCodec.encode(html)
+        + '&j=' + HTML2URLCodec.encode(js);
+
+document.getElementById('urllink').href = url;
+document.getElementById('urllink').innerHTML = 'Right click here and copy link address';
+
+// Show how much the template + compression saved versus the old base64 scheme.
+var legacyLen = b64EncodeUnicode(html).length + b64EncodeUnicode(js).length;
+var newLen = HTML2URLCodec.encode(html).length + HTML2URLCodec.encode(js).length;
+if (legacyLen > 0) {
+  console.log('URL payload: ' + newLen + ' chars (old base64 would be ' + legacyLen
+    + ', saved ' + Math.round((1 - newLen / legacyLen) * 100) + '%)');
+}
+
+copy(url);
 alert("URL COPIED !");
-//str = LZString.decompress(compressed);
-//console.log("Sample is: " + str);
-//document.getElementById('urllink').href='http://html2url.rf.gd/site.php?'+compressed;
 }
 
     </script>
@@ -204,4 +209,7 @@ localStorage.setItem('myBook', JSON.stringify(btoa(htmlContents)));
 localStorage.setItem('smyBook', JSON.stringify(btoa(htmlContents)));
 window.onload=console.log("endTime until everything loaded: ", Date.now()-timerStart);
  </script>
- <script src="js/app.js"></script>  
+ <script src="js/lz-string.js"></script>
+ <script src="js/templates.js"></script>
+ <script src="js/codec.js"></script>
+ <script src="js/app.js"></script>

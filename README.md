@@ -17,7 +17,7 @@ Checkout the new updated project at https://html2url.app.scot/
 
 ## How Does it Work?
 
-Similar to image data URLs, data is compressed, base64 encoded, and placed in the URL.
+Similar to image data URLs, the HTML is **diffed against a built-in template, then compressed, then URL-safe encoded** and placed in the URL. Only the bytes that are *truly different* from the closest template ever travel in the URL — see [`COMPRESSION.md`](COMPRESSION.md) for the full breakdown and measured savings.
 
 ## Is it Innovative?
 
